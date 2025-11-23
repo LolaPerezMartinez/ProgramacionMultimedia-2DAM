@@ -1,45 +1,66 @@
 import { useState, type JSX } from "react";
 
-type Idiomas = 'es' | 'en' ;
+type Idioma = 'es' | 'en';
 
 type Traducciones = {
-    [key in Idiomas] : {
+    [key in Idioma]:{
         titulo: string,
         seleccion: string,
         bienvenida: string,
-        descripcion: string,
+        descripcion: string
     }
 }
 
-function CambiarIdioma (): JSX.Element {
-    const [idioma, setIdioma] = useState<Idiomas>('es');
+function CambiarIdioma(): JSX.Element{
+    const [idioma, setIdioma] = useState<Idioma>('es');
 
-    const traducciones : Traducciones = {
-        es :{
-            titulo: 'Bienvenido',
-            seleccion: 'Selecciona un lenguaje',
-            bienvenida: 'Bienvenido/a',
-            descripcion: 'Estamos en un cambio de idiomas'
-
+    const traducciones : Traducciones ={
+        'es' :{
+            titulo: 'Titulo en español',
+            seleccion: 'Selecciona en español',
+            bienvenida: 'Bienvenida en español',
+            descripcion: 'Descripcion en español'
         },
-        en: {
-            titulo: 'Language Selector',
-            seleccion: 'Select a language:',
-            bienvenida: 'Welcome!',
-            descripcion: 'This is an example of language switching in React'
+        'en' :{
+            titulo: 'Titulo en ingles',
+            seleccion: 'Selecciona en ingles',
+            bienvenida: 'Bienvenida en ingles',
+            descripcion: 'Descripcion en ingles'
         }
     }
 
-    const texto = traducciones[idioma];
-    return <>
-        <h1>{texto.bienvenida}</h1>
-        <h2>{texto.seleccion}</h2>
-        <button onClick={() => setIdioma('es')}>Español</button>
-        <button onClick={() => setIdioma('en')}>English</button>
-        <h2>{texto.bienvenida}</h2>
-        <h3>{texto.descripcion}</h3>
+    const botones = [
+        {code: 'es', idioma: 'Español'},
+        {code: 'en', idioma: 'English'}
+    ]
 
-    </>
+    
+    
+
+    return(
+        <div>
+            <h1>{traducciones[idioma].titulo}</h1>
+            <h2>{traducciones[idioma].seleccion}</h2>
+
+            <div>
+                {botones.map((boton)=>
+                (
+                    <button key={boton.code} onClick={() =>setIdioma(boton.code as Idioma)}>{boton.idioma}</button>
+                )
+                                )}
+
+            </div>
+
+            <button onClick={() => setIdioma('es')} style={{backgroundColor : idioma === 'es' ? 'blue' : 'grey'}}>Español</button>
+            <button onClick={() => setIdioma('en')} style={{backgroundColor : idioma === 'en' ? 'blue' : 'grey'}}>English</button>
+
+           <h2>{traducciones[idioma].bienvenida}</h2>
+           <h3>{traducciones[idioma].descripcion}</h3>
+
+
+
+        </div>
+    )
 }
 
 export default CambiarIdioma;

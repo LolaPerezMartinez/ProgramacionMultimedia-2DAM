@@ -17,11 +17,29 @@
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
+
+table{
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px;
+ 
+}
+th{
+
+  background-color: #09f;
+}
+th, td{
+  padding: 10 px;
+  border: 1px solid white;
+  
+
+}
 button{
-  margin: 10px;
+  margin: 20px;
   color: white;
   font-weight: bold;
   background-color: #09acc2aa;
+  cursor: pointer;
   transition: transform 0.2s ease;
  
 }

@@ -1,69 +1,66 @@
-import { useState, type JSX } from "react";
+import { useState, type JSX } from "react"
 
-type ElementoItem = {
+type Contador ={
     id: number,
-    valor: number,
-    timeStamp : Date
+    valor:number,
+    timeStamp: Date
 }
 
-function ContadorConHistorial () : JSX.Element{
+function ContadorConHistorial () : JSX.Element {
+    const [contador, setContador] = useState<number>(0);
+    const [historial, setHistorial] = useState<Contador[]>([]);
 
-        const [contador, setContador] = useState<number>(0);
-        const [historial, setHistorial] = useState<ElementoItem[]>([{
-            id: 1, valor: 0, timeStamp: new Date()
-        }])
-
-        function AñadirAlHistorial (nuevoValor: number) : void {
-                const nuevoItem : ElementoItem = {
-                    id: IdMayor(historial) + 1, valor: nuevoValor, timeStamp: new Date() 
-                }
-
-                setHistorial([...historial, nuevoItem]);
+    function nextId (lista: Contador[]): number {
+        const idMaximo = lista.reduce((max, elemento) => (elemento.id > max ? elemento.id : max), 0);
+        return idMaximo + 1;
+    }
+    const agregarAlHistorial = (nuevoValor: number) : void =>{
+        const nuevoDato : Contador = {
+            id: nextId(historial), valor: nuevoValor, timeStamp: new Date()
         }
+        setHistorial([...historial, nuevoDato]);
+    }
+    const aumentar = () : void => {
+        const nuevoValor = contador + 1;
+        setContador(nuevoValor);
+        agregarAlHistorial(nuevoValor);
+    }
 
-        function IdMayor(listaItem : ElementoItem[]): number {
-           return listaItem.reduce((maxId, item) => (item.id > maxId ? item.id : maxId), 0);
-        } 
+    const disminuir = () : void => {
+        const nuevoValor = contador - 1;
+        setContador(nuevoValor);
+        agregarAlHistorial(nuevoValor);
+    }
 
-        const Incrementar = (): void =>{
-            const nuevoNumero = contador + 1;
-            setContador(nuevoNumero);
-            AñadirAlHistorial(nuevoNumero);
-        }
+    const reset = () : void => {
+        setContador(0);
+        setHistorial([{id:1, valor: 0, timeStamp: new Date()}]);
+    }
 
-        const Decrementar = () : void =>{
-            const nuevoNumero = contador - 1;
-            setContador(nuevoNumero);
-            AñadirAlHistorial(nuevoNumero);
-        }
+    return (
+        <div>
+            <div>
+            <h1>Historial con contador</h1>
+            <h2>Contador: {contador}</h2>
+            <button onClick={disminuir}>-</button>
+            <button onClick={reset}>Reset</button>
+            <button onClick={aumentar}>+</button>
+            </div>
 
-       const Reset = () : void =>{
-            const nuevoNumero = 0;
-            setContador(0);
-            AñadirAlHistorial(nuevoNumero);
-       }
+            <div>
+                <h2>Historico del contador</h2>
+                <ul>
+                    {historial.map((e : Contador) => (
+                        <li key={e.id}>ID: {e.id} |  Valor: {e.valor} | Time: {e.timeStamp.toLocaleDateString()}</li>
+                    ))}
+                </ul>
 
-    return<>
-        <h1>Contador con historial</h1>
-        <h2>Contador: {contador}</h2>
-        <button onClick={Decrementar}>-</button>
-        <button onClick={Reset}>Reset</button>
-        <button onClick={Incrementar}>+</button>
-
-        <h2>Historico del contador</h2>
-        <ul>
-            {historial.map(
-                (elemento : ElementoItem) => (
-                    <li key={elemento.id}>
-                        {elemento.id} - {elemento.valor} - {elemento.timeStamp.toLocaleDateString()}
-                    </li>
-                )
-            )}
-        </ul>
+                <h3>Cantidad de elementos del historico: {historial.length}</h3>
+            </div>
 
 
-    
-    </>
+        </div>
+    )
 }
 
 export default ContadorConHistorial;

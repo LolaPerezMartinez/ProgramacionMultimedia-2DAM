@@ -1,75 +1,77 @@
-import { useState, type JSX } from "react";
+import { useState, type JSX } from "react"
 
-type Nota= {
+type Nota = {
     id: number,
     asignatura: string,
-    nota: number,
+    nota: number
 }
 
-function TablasConMedia(): JSX.Element {
-        const [asignatura, setAsignatura] = useState<string>('');
-        const [nota, setNota] = useState<string>('');
-        const [notas, setNotas] = useState<Nota[]>([]);
 
-        let sumaNotas: number = notas.map(n => n.nota).reduce((accum, nota)=> (accum + nota), 0);
-        let notaMedia: number =  notas.length > 0 ? sumaNotas/notas.length : 0;
+function TablasConMedia() : JSX.Element {
+    const [asignatura, setAsignatura] = useState<string>('');
+    const [nota, setNota] = useState<string>('');
+    const [notas, setNotas] = useState<Nota[]>([]);
 
-        const agregarNota= () : void =>{
-            if(asignatura.trim() === '' || nota === '') return
+    const sumaNotas: number = notas.reduce((accum, nota) => (accum + nota.nota), 0);
+    const media: number = notas.length <= 0 ? 0 : sumaNotas/ notas.length;
 
-            const numNota = Number(nota);
-            if(isNaN(numNota) || numNota < 0 || numNota > 10) return
+    const AgregarAsignatura = (): void => {
+        if(asignatura.trim() === '' || nota === '') return
 
-            let idMaximo = notas.reduce((max, n) => ((n.id > max ? n.id : max)), 0);
-            let nextId = idMaximo +1;
+        const notaNumero = Number(nota);
+        if(isNaN(notaNumero) || notaNumero < 0 || notaNumero > 10) return
 
-            setNotas([...notas, {id: nextId, asignatura: asignatura, nota: numNota}])
-            setAsignatura('');
-            setNota('');
-        }
-         
-        const eliminarAsignatura = (id: number) : void =>{
-            setNotas(notas.filter(n => n.id != id));
-        }
-       
+        const maxId = notas.reduce((max, nota) => (nota.id > max ? nota.id : max), 0);
+        let nextId = maxId + 1;
+
+        setNotas([...notas, {id: nextId, asignatura: asignatura, nota: notaNumero}]);
+        setAsignatura('');
+        setNota('');
+    }
+
+    const eliminarNota = (id:number) : void =>{
+       setNotas(notas.filter(n => n.id != id));
+    }
+
     return(
+        <div>
+            <h1>Tabla de notas con media</h1>
+            <input type="text" 
+                    value={asignatura}
+                    onChange={e => setAsignatura(e.target.value)}
+                    placeholder="Nombre asignatura"/>
+            <input type="number" 
+                    value={nota}
+                    onChange={e => setNota(e.target.value)}
+                    placeholder="Nota(0-10)"/>
+            <button onClick={AgregarAsignatura}>Agregar</button>
 
-    <div>
-        <h1>Tabla de notas con media</h1>
-        <input type="text" 
-                value={asignatura}
-                onChange={e => setAsignatura(e.target.value)}
-                placeholder="Nombre asignatura"/>
-        <input type="number" 
-               value={nota} 
-               onChange={e=> setNota(e.target.value)}
-               placeholder="Nota (0-10)"/>
-        <button onClick={agregarNota}>Agregar</button>
-
-        <table>
-            <thead>
-                <tr>
-                    <td>Asignatura</td>
-                    <td>Nota</td>
-                    <td>Acciones</td>
-                </tr>
-            </thead>
-            <tbody>
-                {notas.map((n : Nota) => 
-                <tr key={n.id}>
-                   <td>{n.asignatura}</td>
-                   <td>{n.nota.toFixed(1)}</td>
-                   <td>
-                        <button onClick={() => eliminarAsignatura(n.id)}>Eliminar</button>
-                   </td>
-                </tr>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Asignatura</td>
+                        <td>Nota</td>
+                        <td>Acciones</td>
+                    </tr>
+                </thead>
+                <tbody> 
+                    {notas.map((nota: Nota) =>
+                    <tr key={nota.id}>
+                        <td>{nota.asignatura}</td>
+                        <td>{nota.nota}</td>
+                        <td>
+                            <button onClick={() => eliminarNota(nota.id)}>Eliminar</button>
+                        </td>
+                    </tr>
                 )}
-            </tbody>
-        </table>
-
-        <h2>Nota media: {notaMedia.toFixed(2)}</h2>
-    </div>
-
+                </tbody>
+            </table>
+            
+            <div>
+            <h2>Nota media: {media.toFixed(2)}</h2>
+            </div>
+            {notas.length === 0 && <p>No hay asignaturas que mostar.</p>}
+        </div>
     )
 }
 
